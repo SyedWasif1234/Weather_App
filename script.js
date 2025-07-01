@@ -26,7 +26,7 @@
     try {
       showLoading();
       const url = `https://api.openweathermap.org/geo/1.0/direct?` +
-                `q=${encodeURIComponent(city)}&limit=1&appid=28729f9bf938a93d5625ead782365206`;
+                `q=${encodeURIComponent(city)}&limit=1&appid=API_KEY`;
 
       const res = await fetch(url)
       const data = await res.json()
@@ -327,12 +327,12 @@ function Display_Weather_Forecast(Summery){
 
   async function Load_Weather(lat ,lon){
     try {
-      weather = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=28729f9bf938a93d5625ead782365206`).then((res)=>res.json())
+      weather = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=API_KEY`).then((res)=>res.json())
       Hide_Loading();
        
       Display_content(weather)
 
-      forcast_weather_data = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=28729f9bf938a93d5625ead782365206`).then((res)=>res.json());
+      forcast_weather_data = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=API_KEY`).then((res)=>res.json());
 
      const Summery = summariseToDays(forcast_weather_data.list) 
      Display_Weather_Forecast(Summery)
