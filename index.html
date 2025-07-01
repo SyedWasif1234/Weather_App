@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather UI – Cloudy Glassmorphism</title>
+
+  <!-- ====  STYLES  ==== -->
+  <style>
+    /* ——————  RESET  —————— */
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    /* ——————  BACKGROUND LAYERS  —————— */
+    body{
+       background-color: #1e2746;
+      font-family:"Segoe UI",sans-serif;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:hidden;           /* hide moving clouds overflow */
+      position:relative;
+      color:#fff;
+    }
+
+    /* Moving clouds layer */
+    body::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      /* Tiled wide SVG cloud strip (free, light‑weight).  Feel free to replace. */
+      background:url("https://wallpaperbat.com/img/510193-zeynep-sert-on-skies-pink-clouds-wallpaper-aesthetic-desktop-wallpaper-cloud-wallpaper.jpg") repeat-x center/contain;
+      animation:cloudDrift 120s linear infinite;
+      z-index:0 ;
+    }
+
+    /* Dark‑blur gradient overlay for depth */
+    body::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient( to top right, rgba(41,57,98,0.65) 0%, rgba(168,204,255,0.25) 100%);
+      backdrop-filter:blur(8px);
+      z-index:-2;
+    }
+
+    @keyframes cloudDrift{
+      from{ background-position-x:0;   }
+      to  { background-position-x:10000px; }
+    }
+
+    /* ——————  LAYOUT WRAPPER  —————— */
+    .app-container{
+      display:flex;
+      flex-direction: row;
+      gap:20px;
+      padding:20px;
+      position:relative;
+      z-index:1;                 /* keep above background layers */
+      flex-wrap:wrap;            /* stacks nicely on narrow screens */
+    }
+
+    /* ——————  PANEL SHARED STYLES  —————— */
+    .panel1{
+      flex-direction: column;
+      width:520px;
+      background:rgba(255,255,255,0.10);
+      backdrop-filter:blur(25px);
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 8px 28px rgba(0,0,0,0.25);
+    }
+
+     .panel2{
+      width:320px;
+      background:rgba(255,255,255,0.10);
+      backdrop-filter:blur(25px);
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 8px 28px rgba(0,0,0,0.25);
+    }
+
+
+
+    /* ——————  LEFT (HOME) PANEL  —————— */
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .flag{ width:32px; }
+
+    .current-weather{
+      min-height: 160px;
+      text-align:center;
+      margin-top:20px;
+    }
+    .current-weather h1{ font-size:56px; font-weight:600; }
+    .weather-icon{ font-size:48px; margin-top:8px; }
+
+    /* City forecast (small cards) */
+    .date{
+      display:flex;
+      justify-content:center;
+      margin-top:12px;
+    }
+    
+
+    .date-box{
+      font-size:15px bold;
+    }
+    /* Week forecast */
+    .week-days{
+      display:flex;
+      justify-content:space-between;
+      margin-top:12px;
+      font-size:12px;
+    }
+    .week-days div{ text-align:center; }
+
+    /* ——————  RIGHT (CITY‑SELECT) PANEL  —————— */
+    .search-bar{
+      width:100%;
+      padding:12px 14px;
+      margin:18px 0 24px;
+      border-radius:14px;
+      border:none;
+      outline:none;
+      background:rgba(255,255,255,0.12);
+      color:#fff;
+      font-size:14px;
+    }
+
+    .metrics{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-bottom:32px;
+      font-size:15px;
+    }
+    .metrics div{
+      background:rgba(255,255,255,0.18);
+      padding:14px 0;
+      text-align:center;
+      border-radius:14px;
+      font-weight:500;
+    }
+    .metrics span{
+      display:block;
+      font-size:11px;
+      margin-top:4px;
+      opacity:.75;
+      font-weight:400;
+    }
+
+    /* Simple line‑style chart (placeholder) */
+    .chart{
+      height:110px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      margin-top:18px;
+      position:relative;
+    }
+    .chart-bar{
+      width:10px;
+      border-radius:5px;
+      background:#ffffff;
+      opacity:.9;
+      position:relative;
+    }
+    .chart-bar.active{
+      box-shadow:0 0 10px 2px #fff;
+    }
+
+@media (max-width: 768px) {
+  /* stack + scroll (you already have these) */
+  body {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+
+  .app-container {
+    flex-direction: column-reverse;
+    margin-top: 20px;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+  }
+
+  .panel1,
+  .panel2 {
+    width: 95%;
+    flex: 1 1 100%;
+  }
+
+  .week-days {
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  /* 🔹  REMOVE the moving‑cloud layer on phones  */
+  body::before {
+    content: none !important;      /* nothing to paint */
+    animation: none !important;    /* stop the key‑frames */
+  }
+}
+
+  </style>
+</head>
+
+<body>
+  <!-- ‑‑‑‑‑ APP CONTAINER ‑‑‑‑‑ -->
+  <div class="app-container" width="100%">
+
+    <!-- =====  LEFT : HOME PANEL  ===== -->
+    <section class="panel1">
+      <div class="header">
+        <h2>Home</h2>
+        <img class="flag" src="https://media.istockphoto.com/id/512185437/photo/indias-flag-close-up.jpg?s=612x612&w=0&k=20&c=ndMmdJY9qsL4f_dJBSDbPjD213GD5s_YcZAJK8z2uTQ=" alt="US flag">
+      </div>
+
+      <!-- Current weather card -->
+      <div class="current-weather">
+        <h1 class="temp"><span>℃</span></h1>
+        <p class="day"></p>
+        <p class="location" style="opacity:.9;margin-top:4px;font-size:15px;"></p>
+        <p class="Feels_like" style="opacity:.9;margin-top:4px;font-size:15px;"></p>
+        <div class="weather-icon">🌤️</div>
+        
+      </div>
+
+      <!-- City forecast -->
+      <h3 style="margin-top:34px;font-weight:500;"></h3>
+      <div class="date">
+        <div class="date-box"><span id="date">Date</span></div>
+      </div>
+
+      <!-- Week forecast -->
+      <h3 style="margin-top:34px;font-weight:500;">Week Forecast</h3>
+      <div class="week-days" id="week-forecast">
+        
+      </div>
+    </section>
+
+    <!-- =====  RIGHT : CHOOSE CITY PANEL  ===== -->
+    <section class="panel2">
+      <h2>Choose a city</h2>
+      <input class="search-bar" type="text" placeholder="Search city">
+
+      <!-- Weather metrics -->
+      <div class="metrics">
+          <div>
+          <h3 class="Condition"></h3>
+          <span id="Condition_Text">Condition</span>
+        </div>
+        <div> 
+          <h3 class="Visiblity">  </h3>
+          <span id="text">Visiblity</span>
+        </div>
+        <div>
+           <h3 class="wind"> </h3>
+           <span id="text">Wind</span>
+        </div>
+        <div>
+          <h3 class="Pressure"></h3>
+          <span id="pressure_Text">Pressure</span>
+        </div>
+          <div>
+          <h3 class="Time"></h3>
+          <span id="time">Time</span>
+        </div>
+         <div>
+          <h3 class="Humidity"></h3>
+          <span id="Humidity_Text">Humidity</span>
+        </div>
+        <div>
+          <h3 class="sunrise_Time"></h3>
+          <span id="Sunrise_Text">sunrise</span>
+        </div>
+        <div>
+          <h3 class="Sunset_Time"></h3>
+          <span id="Sunset_Text">Sunset</span>
+        </div> 
+      </div>
+    </section>
+
+  </div><!-- /app-container -->
+</body>
+<script src="script.js"></script>
+</html>
